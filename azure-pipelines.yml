@@ -1,10 +1,8 @@
 trigger:
-- main  # Only trigger when changes are pushed to main
+- '*'
 
 pool:
   vmImage: 'ubuntu-20.04'
-  demands:
-  - npm
 
 variables:
   buildConfiguration: 'Release'
@@ -12,32 +10,40 @@ variables:
   dotnetSdkVersion: '6.x'
 
 steps:
+# Use the right .NET SDK version
 - task: UseDotNet@2
   displayName: 'Use .NET SDK $(dotnetSdkVersion)'
   inputs:
     version: '$(dotnetSdkVersion)'
 
+# Restore npm packages
 - task: Npm@1
-  displayName: 'Install Node.js dependencies'
+  displayName: 'Run npm install'
   inputs:
     verbose: false
 
+# Compile SASS files
 - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
   displayName: 'Compile Sass assets'
 
+# Run Gulp tasks
 - task: Gulp@1
-  displayName: 'Run Gulp tasks'
+  displayName: 'Run gulp tasks'
 
-- script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
-  displayName: 'Write build info to file'
+# Write build info to file
+- script: |
+    echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt
+  displayName: 'Write build info'
   workingDirectory: $(wwwrootDir)
 
+# Restore NuGet packages
 - task: DotNetCoreCLI@2
-  displayName: 'Restore NuGet packages'
+  displayName: 'Restore project dependencies'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
 
+# Build the app
 - task: DotNetCoreCLI@2
   displayName: 'Build the project - $(buildConfiguration)'
   inputs:
@@ -45,6 +51,7 @@ steps:
     arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
 
+# Publish the app
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
   inputs:
@@ -54,6 +61,7 @@ steps:
     arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
     zipAfterPublish: true
 
+# Publish artifact
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   inputs:
