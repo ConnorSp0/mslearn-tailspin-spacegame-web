@@ -16,14 +16,14 @@ steps:
     version: '6.x'
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
-# Install Node.js packages (installs gulp, gulp-sass, etc.)
+# Install Node.js packages (gulp, sass, etc.)
 - task: Npm@1
   displayName: 'Install Node.js packages'
   inputs:
     command: 'install'
     workingDir: 'Tailspin.SpaceGame.Web'
 
-# Run Gulp tasks (includes Sass compilation and minification)
+# Run Gulp tasks (compiles Sass and minifies assets)
 - task: Gulp@1
   displayName: 'Run Gulp tasks'
   inputs:
@@ -31,7 +31,7 @@ steps:
     targets: 'default'
     workingDirectory: 'Tailspin.SpaceGame.Web'
 
-# Write build info (optional)
+# Write build info to wwwroot
 - script: |
     echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt
   displayName: 'Write build info'
@@ -44,9 +44,10 @@ steps:
     command: 'restore'
     projects: '**/*.csproj'
 
-# Build the project
+# Build the .NET project
 - task: DotNetCoreCLI@2
   displayName: 'Build the .NET project'
   inputs:
     command: 'build'
-    arguments: '--no-restore --configuration $(buildC
+    arguments: '--no-restore --configuration $(buildConfiguration)'
+    projects: '**/*.csproj'
