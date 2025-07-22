@@ -8,13 +8,14 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-# Use the .NET 6 SDK
+# Install .NET 8 SDK
 - task: UseDotNet@2
-  displayName: 'Use .NET SDK 6.x'
+  displayName: 'Use .NET SDK 8.x'
   inputs:
     packageType: 'sdk'
-    version: '6.x'
+    version: '8.x'
     installationPath: $(Agent.ToolsDirectory)/dotnet
+
 
 # Install Node.js packages (gulp, sass, etc.)
 - task: Npm@1
