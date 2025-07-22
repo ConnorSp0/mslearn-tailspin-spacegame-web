@@ -27,9 +27,9 @@ steps:
 - task: Gulp@1
   displayName: 'Run Gulp tasks'
   inputs:
-    gulpFile: 'Tailspin.SpaceGame.Web/gulpfile.js'
+    gulpFile: 'gulpfile.js'
     targets: 'default'
-    workingDirectory: 'Tailspin.SpaceGame.Web'
+    workingDirectory: '.'
 
 # Write build info to wwwroot
 - script: |
