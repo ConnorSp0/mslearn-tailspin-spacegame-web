@@ -16,19 +16,14 @@ steps:
     version: '6.x'
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
-# Restore Node packages
+# Install Node.js packages (installs gulp, gulp-sass, etc.)
 - task: Npm@1
   displayName: 'Install Node.js packages'
   inputs:
     command: 'install'
     workingDir: 'Tailspin.SpaceGame.Web'
 
-# Compile Sass using node-sass
-- script: |
-    ./node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot
-  displayName: 'Compile Sass assets'
-
-# Run Gulp tasks
+# Run Gulp tasks (includes Sass compilation and minification)
 - task: Gulp@1
   displayName: 'Run Gulp tasks'
   inputs:
@@ -36,7 +31,7 @@ steps:
     targets: 'default'
     workingDirectory: 'Tailspin.SpaceGame.Web'
 
-# Write build info
+# Write build info (optional)
 - script: |
     echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt
   displayName: 'Write build info'
@@ -54,5 +49,4 @@ steps:
   displayName: 'Build the .NET project'
   inputs:
     command: 'build'
-    arguments: '--no-restore --configuration $(buildConfiguration)'
-    projects: '**/*.csproj'
+    arguments: '--no-restore --configuration $(buildC
