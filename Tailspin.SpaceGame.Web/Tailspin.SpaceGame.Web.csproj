@@ -8,4 +8,12 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\avatars\" />
   </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Tailspin.SpaceGame.Web.Models" Version="1.0.0" />
+	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="Tailspin.SpaceGame.Web.Models190502" Version="1.0.0" />
+  </ItemGroup>
 </Project>

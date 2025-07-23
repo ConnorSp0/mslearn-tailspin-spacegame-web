@@ -60,3 +60,11 @@ steps:
     pathToPublish: '$(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
     artifactName: 'drop'
   condition: succeeded()
+
+ - task: NuGetCommand@2
+  displayName: 'Restore project dependencies'
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/*.sln'
+    feedsToUse: 'select'
+    vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
