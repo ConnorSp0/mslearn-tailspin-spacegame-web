@@ -1,47 +1,83 @@
 trigger:
-- main
+- '*'
 
 pool:
   vmImage: 'ubuntu-latest'
 
+
 variables:
-  BuildConfiguration: 'Release'
+  buildConfiguration: 'Release'
+  wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
+  dotnetSdkVersion: '8.x'
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Install .NET 8 SDK'
+  displayName: 'Use .NET SDK $(dotnetSdkVersion)'
   inputs:
-    packageType: 'sdk'
-    version: '8.0.x'
-    includePreviewVersions: true
+    version: '$(dotnetSdkVersion)'
 
-# Optional: confirm the .NET version used
-- script: dotnet --version
-  displayName: 'Check .NET SDK Version'
+- task: Npm@1
+  displayName: 'Run npm install'
+  inputs:
+    verbose: false
+
+
+- task: gulp@1
+  displayName: 'Run gulp tasks'
+
+- script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
+  displayName: 'Write build info'
+  workingDirectory: $(wwwrootDir)
 
 - task: DotNetCoreCLI@2
-  displayName: 'Restore dependencies'
+  displayName: 'Restore project dependencies'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Build solution'
+  displayName: 'Build the project - $(buildConfiguration)'
   inputs:
     command: 'build'
+    arguments: '--no-restore --configuration $(buildConfiguration)'
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Run unit tests'
+  displayName: 'Publish the project - $(buildConfiguration)'
+  inputs:
+    command: 'publish'
+    projects: '**/*.csproj'
+    publishWebProjects: false
+    arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+    zipAfterPublish: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  condition: succeeded()
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run unit tests - $(buildConfiguration)'
   inputs:
     command: 'test'
+    arguments: '--no-build --configuration $(buildConfiguration) --logger "trx;LogFileName=test_results.trx" --results-directory $(Build.ArtifactStagingDirectory)/TestResults'
     projects: '**/*.Tests.csproj'
-    arguments: '--configuration $(BuildConfiguration) --logger trx --results-directory $(Build.ArtifactStagingDirectory)/TestResults'
 
 - task: PublishTestResults@2
   displayName: 'Publish test results'
+  condition: succeededOrFailed()
   inputs:
     testResultsFiles: '$(Build.ArtifactStagingDirectory)/TestResults/*.trx'
-    testRunner: VSTest
-    failTaskOnMissingResultsFile: true
+    testRunner: 'VSTest'
+
+
+- task: Npm@1
+  displayName: 'Run npm install'
+  inputs:
+    command: 'install'
+    workingDir: 'Tailspin.SpaceGame.Web'
+
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK 8.0'
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
