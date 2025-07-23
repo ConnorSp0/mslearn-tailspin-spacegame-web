@@ -4,6 +4,7 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+
 variables:
   buildConfiguration: 'Release'
   wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
@@ -74,3 +75,9 @@ steps:
   inputs:
     command: 'install'
     workingDir: 'Tailspin.SpaceGame.Web'
+
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK 8.0'
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
