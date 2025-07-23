@@ -57,10 +57,8 @@ steps:
   displayName: 'Publish Artifact: drop'
   condition: succeeded()
 
-- task: NuGetCommand@2
-  displayName: 'Restore project dependencies'
+- task: DotNetCoreCLI@2
+  displayName: 'Restore with dotnet CLI'
   inputs:
     command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
-    vstsFeed: '$(System.TeamProject)/Tailspin.SpaceGame.Web.Models'
+    projects: '**/*.sln'
