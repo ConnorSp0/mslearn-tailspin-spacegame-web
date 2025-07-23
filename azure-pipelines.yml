@@ -63,5 +63,11 @@ steps:
   inputs:
     command: 'test'
     arguments: '--no-build --configuration $(buildConfiguration)'
-    publishTestResults: true
     projects: '**/*.Tests.csproj'
+
+- task: PublishTestResults@2
+  displayName: 'Publish test results'
+  condition: succeededOrFailed()  # Always try to publish, even if tests fail
+  inputs:
+    testResultsFiles: '**/TestResults/*.trx'
+    testRunner: 'VSTest'
