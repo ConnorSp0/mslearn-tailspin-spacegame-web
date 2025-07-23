@@ -5,10 +5,13 @@ const gulp = require("gulp"),
       rimraf = require("rimraf"),
       concat = require("gulp-concat"),
       cleanCSS = require("gulp-clean-css"),
-      uglify = require("gulp-uglify");
+      uglify = require("gulp-uglify"),
+      sass = require("gulp-sass")(require("sass"));  // ✅ USE `sass` here
 
 const paths = {
-  webroot: "./Tailspin.SpaceGame.Web/wwwroot/"
+  webroot: "./Tailspin.SpaceGame.Web/wwwroot/",
+  scss: "./Tailspin.SpaceGame.Web/scss/**/*.scss",     // ✅ Add this line
+  cssDest: "./Tailspin.SpaceGame.Web/wwwroot/css"      // ✅ CSS output
 };
 
 paths.js = paths.webroot + "js/**/*.js";
@@ -17,6 +20,13 @@ paths.css = paths.webroot + "css/**/*.css";
 paths.minCss = paths.webroot + "css/**/*.min.css";
 paths.concatJsDest = paths.webroot + "js/site.min.js";
 paths.concatCssDest = paths.webroot + "css/site.min.css";
+
+// ✅ Compile SCSS
+gulp.task("sass", function () {
+  return gulp.src(paths.scss)
+    .pipe(sass().on("error", sass.logError))
+    .pipe(gulp.dest(paths.cssDest));
+});
 
 gulp.task("clean:js", done => rimraf(paths.concatJsDest, done));
 gulp.task("clean:css", done => rimraf(paths.concatCssDest, done));
@@ -36,7 +46,5 @@ gulp.task("min:css", () => {
     .pipe(gulp.dest("."));
 });
 
-gulp.task("min", gulp.series(["min:js", "min:css"]));
-
-// A 'default' task is required by Gulp v4
+gulp.task("min", gulp.series(["sass", "min:js", "min:css"])); // ✅ Add "sass" here
 gulp.task("default", gulp.series(["min"]));
