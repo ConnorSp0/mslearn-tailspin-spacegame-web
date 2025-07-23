@@ -61,10 +61,4 @@ steps:
     artifactName: 'drop'
   condition: succeeded()
 
-- task: NuGetCommand@2
-  displayName: 'Restore project dependencies'
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    feedsToUse: 'select'
-    vstsFeed: 'Sample/Tailspin.SpaceGame.Web.Models'   # Replace with your actual feed path
+
