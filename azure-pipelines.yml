@@ -38,7 +38,7 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*.Tests.csproj'
-    arguments: '--configuration $(BuildConfiguration) --logger trx --results-directory $(Build.ArtifactStagingDirectory)/TestResults'
+    arguments: '--configuration $(BuildConfiguration) --logger trx --verbosity detailed --results-directory $(Build.ArtifactStagingDirectory)/TestResults'
 
 - task: PublishTestResults@2
   displayName: 'Publish test results'
