@@ -1,5 +1,7 @@
 trigger:
- -'*'
+  branches:
+    include:
+      - '*'  # Trigger on any branch push
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -15,7 +17,6 @@ steps:
     version: '8.0.x'
     includePreviewVersions: true
 
-# Optional: confirm the .NET version used
 - script: dotnet --version
   displayName: 'Check .NET SDK Version'
 
