@@ -69,3 +69,9 @@ steps:
   inputs:
     testResultsFiles: '**/TestResults/*.trx'
     testRunner: 'VSTest'
+
+- task: Npm@1
+  displayName: 'Run npm install'
+  inputs:
+    command: 'install'
+    workingDir: 'Tailspin.SpaceGame.Web'
