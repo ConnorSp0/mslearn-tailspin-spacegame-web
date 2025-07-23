@@ -38,6 +38,13 @@ steps:
   workingDirectory: $(wwwrootDir)
 
 - task: DotNetCoreCLI@2
+  displayName: 'Restore with dotnet CLI'
+  inputs:
+    command: 'restore'
+    projects: '**/*.sln'
+
+
+- task: DotNetCoreCLI@2
   displayName: 'Build the project - $(buildConfiguration)'
   inputs:
     command: 'build'
@@ -57,8 +64,3 @@ steps:
   displayName: 'Publish Artifact: drop'
   condition: succeeded()
 
-- task: DotNetCoreCLI@2
-  displayName: 'Restore with dotnet CLI'
-  inputs:
-    command: 'restore'
-    projects: '**/*.sln'
