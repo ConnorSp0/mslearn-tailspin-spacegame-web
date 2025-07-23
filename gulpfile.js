@@ -1,42 +1,56 @@
 ﻿/// <binding Clean='clean' />
 "use strict";
 
-const gulp = require("gulp"),
-      rimraf = require("rimraf"),
-      concat = require("gulp-concat"),
-      cleanCSS = require("gulp-clean-css"),
-      uglify = require("gulp-uglify");
+// Import required modules
+const { src, dest, series, parallel } = require("gulp");
+const rimraf = require("rimraf");
+const concat = require("gulp-concat");
+const cleanCSS = require("gulp-clean-css");
+const uglify = require("gulp-uglify");
+const path = require("path");
 
 const paths = {
-  webroot: "./Tailspin.SpaceGame.Web/wwwroot/"
+    webroot: "./Tailspin.SpaceGame.Web/wwwroot/",
 };
 
-paths.js = paths.webroot + "js/**/*.js";
-paths.minJs = paths.webroot + "js/**/*.min.js";
-paths.css = paths.webroot + "css/**/*.css";
-paths.minCss = paths.webroot + "css/**/*.min.css";
-paths.concatJsDest = paths.webroot + "js/site.min.js";
-paths.concatCssDest = paths.webroot + "css/site.min.css";
+paths.js = path.join(paths.webroot, "js/**/*.js");
+paths.minJs = path.join(paths.webroot, "js/**/*.min.js");
+paths.css = path.join(paths.webroot, "css/**/*.css");
+paths.minCss = path.join(paths.webroot, "css/**/*.min.css");
+paths.concatJsDest = path.join(paths.webroot, "js/site.min.js");
+paths.concatCssDest = path.join(paths.webroot, "css/site.min.css");
 
-gulp.task("clean:js", done => rimraf(paths.concatJsDest, done));
-gulp.task("clean:css", done => rimraf(paths.concatCssDest, done));
-gulp.task("clean", gulp.series(["clean:js", "clean:css"]));
+// Clean tasks
+function cleanJs(done) {
+    rimraf(paths.concatJsDest, done);
+}
 
-gulp.task("min:js", () => {
-  return gulp.src([paths.js, "!" + paths.minJs], { base: "." })
-    .pipe(concat(paths.concatJsDest))
-    .pipe(uglify())
-    .pipe(gulp.dest("."));
-});
+function cleanCss(done) {
+    rimraf(paths.concatCssDest, done);
+}
 
-gulp.task("min:css", () => {
-  return gulp.src([paths.css, "!" + paths.minCss])
-    .pipe(concat(paths.concatCssDest))
-    .pipe(cleanCSS())
-    .pipe(gulp.dest("."));
-});
+const clean = parallel(cleanJs, cleanCss);
 
-gulp.task("min", gulp.series(["min:js", "min:css"]));
+// Minify JS
+function minJs() {
+    return src([paths.js, "!" + paths.minJs], { base: "." })
+        .pipe(concat(paths.concatJsDest))
+        .pipe(uglify())
+        .pipe(dest("."));
+}
 
-// A 'default' task is required by Gulp v4
-gulp.task("default", gulp.series(["min"]));
+// Minify CSS
+function minCss() {
+    return src([paths.css, "!" + paths.minCss])
+        .pipe(concat(paths.concatCssDest))
+        .pipe(cleanCSS())
+        .pipe(dest("."));
+}
+
+// Grouped tasks
+const min = series(minJs, minCss);
+
+// Default task
+exports.clean = clean;
+exports.min = min;
+exports.default = min;
