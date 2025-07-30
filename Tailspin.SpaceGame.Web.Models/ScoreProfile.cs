@@ -1,8 +1,8 @@
 namespace TailSpin.SpaceGame.Web.Models
 {
-    public class ProfileViewModel
+    public class ScoreProfile
     {
+        public Score Score { get; set; }
         public Profile Profile { get; set; }
-        public int Rank { get; set; }
     }
 }
