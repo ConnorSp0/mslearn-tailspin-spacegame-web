@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <PackageId>Tailspin.SpaceGame.Web.Models</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>YourName</Authors>
+    <Description>Model classes for the Tailspin.SpaceGame app</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+
+</Project>
