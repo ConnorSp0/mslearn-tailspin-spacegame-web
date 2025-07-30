@@ -1,3 +1,5 @@
+using TailSpin.SpaceGame.Web.Models;
+
 namespace TailSpin.SpaceGame.Web.Models
 {
     public class Profile : Modelto

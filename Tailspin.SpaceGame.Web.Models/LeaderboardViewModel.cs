@@ -1,3 +1,7 @@
+using TailSpin.SpaceGame.Web.Models;
+
+namespace TailSpin.SpaceGame.Web.Models
+
 public class LeaderboardViewModel
 {
     public IEnumerable<Score> Scores { get; set; }
